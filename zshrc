@@ -81,7 +81,9 @@ export EDITOR='vim'
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # Set generic HTTP proxy for applications which honor http_proxy
-http_proxy=http://127.0.0.1:55342/
+# 2015/07/24 23:33:12, AA: PROXY_TO_USE set on .zshrc
+# http_proxy=http://127.0.0.1:55342/
+http_proxy=$PROXY_TO_USE
 https_proxy=$http_proxy
 ftp_proxy=$http_proxy
 HTTP_PROXY=$http_proxy
