@@ -102,3 +102,8 @@ export LC_ALL=pt_PT.UTF-8
 case $- in *i*)
   if [ -z "$TMUX" ]; then exec tmux; fi;;
 esac
+
+# 2015/10/14 22:22:43, AA: From
+# https://www.reddit.com/r/vim/comments/3oowqn/stumbled_upon_a_nice_way_to_use_arrow_keys/
+# To use vim keybindings on zsh
+bindkey -v
