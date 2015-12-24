@@ -107,3 +107,7 @@ esac
 # https://www.reddit.com/r/vim/comments/3oowqn/stumbled_upon_a_nice_way_to_use_arrow_keys/
 # To use vim keybindings on zsh
 bindkey -v
+
+# 2015/10/30 23:20:51, AA: From 
+# http://stackoverflow.com/a/32398981/687420
+export VAGRANT_DETECTED_OS=cygwin
