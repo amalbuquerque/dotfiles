@@ -96,12 +96,16 @@ export DISPLAY="localhost:0"
 # 2014-09-16, AA: para que apresente por defeito os caracteres UTF-8
 export LC_ALL=pt_PT.UTF-8
 
-# 2015/07/24, AA: From http://unix.stackexchange.com/a/41282/68722
-# $- -> current options set for the shell (from http://stackoverflow.com/a/5163260/687420)
-# *i* -> regex searching for an 'i', indicating it's an interactive shell; only in this case, run tmux
-case $- in *i*)
-  if [ -z "$TMUX" ]; then exec tmux; fi;;
-esac
+# 2016-01-17, AA: To use the Tmux inside Vagrant (via SSH)
+if ! [ "$WILL_USE_VAGRANT" = "true" ]
+then
+    # 2015/07/24, AA: From http://unix.stackexchange.com/a/41282/68722
+    # $- -> current options set for the shell (from http://stackoverflow.com/a/5163260/687420)
+    # *i* -> regex searching for an 'i', indicating it's an interactive shell; only in this case, run tmux
+    case $- in *i*)
+      if [ -z "$TMUX" ]; then exec tmux; fi;;
+    esac
+fi
 
 # 2015/10/14 22:22:43, AA: From
 # https://www.reddit.com/r/vim/comments/3oowqn/stumbled_upon_a_nice_way_to_use_arrow_keys/
