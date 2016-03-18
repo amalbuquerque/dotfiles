@@ -112,6 +112,11 @@ fi
 # To use vim keybindings on zsh
 bindkey -v
 
+# 2016/03/18 09:32:58, AA: From
+# http://unix.stackexchange.com/a/30169/68722
+# To enable Ctrl+R to get reverse search history
+bindkey "^R" history-incremental-pattern-search-backward
+
 # 2015/10/30 23:20:51, AA: From 
 # http://stackoverflow.com/a/32398981/687420
 export VAGRANT_DETECTED_OS=cygwin
