@@ -120,3 +120,6 @@ bindkey "^R" history-incremental-pattern-search-backward
 # 2015/10/30 23:20:51, AA: From 
 # http://stackoverflow.com/a/32398981/687420
 export VAGRANT_DETECTED_OS=cygwin
+
+# 2016/03/30 16:55:53, AA: From stackoverflow.com/questions/26435333/cygwin-tmux-on-windows-7-why-wont-tmux-use-the-current-path
+export CHERE_INVOKING=1
