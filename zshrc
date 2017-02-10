@@ -79,6 +79,7 @@ export EDITOR='vim'
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias galatest="git archive -o latest.zip HEAD $(git diff --name-only HEAD~1 HEAD)"
 
 # Set generic HTTP proxy for applications which honor http_proxy
 # 2015/07/24 23:33:12, AA: PROXY_TO_USE set on .zshrc
@@ -123,3 +124,22 @@ export VAGRANT_DETECTED_OS=cygwin
 
 # 2016/03/30 16:55:53, AA: From stackoverflow.com/questions/26435333/cygwin-tmux-on-windows-7-why-wont-tmux-use-the-current-path
 export CHERE_INVOKING=1
+
+# Set the key mapping style to 'emacs' or 'vi'.
+zstyle ':omz:module:editor' keymap 'vi'
+
+# Auto convert .... to ../..
+zstyle ':omz:module:editor' dot-expansion 'no'
+
+# Set the Oh My Zsh modules to load (browse modules).
+# The order matters.
+zstyle ':omz:load' omodule \
+  'environment' \
+  'terminal' \
+  'editor' \
+  'history' \
+  'directory' \
+  'spectrum' \
+  'utility' \
+  'completion' \
+  'prompt'
