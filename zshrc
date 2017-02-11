@@ -79,7 +79,7 @@ export EDITOR='vim'
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias galatest="git archive -o latest.zip HEAD $(git diff --name-only HEAD~1 HEAD)"
+# alias galatest="git archive -o latest.zip HEAD $(git diff --name-only HEAD~1 HEAD)"
 
 # Set generic HTTP proxy for applications which honor http_proxy
 # 2015/07/24 23:33:12, AA: PROXY_TO_USE set on .zshrc
