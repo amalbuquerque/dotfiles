@@ -483,7 +483,7 @@
 	<key>NSWindow Frame SessionsPreferences</key>
 	<string>269 167 606 456 0 0 1920 1080 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>2597 388 796 473 1920 0 1920 1080 </string>
+	<string>2597 359 796 473 1920 0 1920 1080 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
 	<string>2609 297 585 452 1920 0 1920 1057 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
@@ -1058,11 +1058,11 @@
 			<key>Normal Font</key>
 			<string>EnvyCodeRForPowerline 13</string>
 			<key>Option Key Sends</key>
-			<integer>1</integer>
+			<integer>0</integer>
 			<key>Prompt Before Closing 2</key>
 			<false/>
 			<key>Right Option Key Sends</key>
-			<integer>1</integer>
+			<integer>0</integer>
 			<key>Rows</key>
 			<integer>25</integer>
 			<key>Screen</key>
@@ -1885,7 +1885,7 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2017-03-23T09:44:57Z</date>
+	<date>2017-03-27T09:29:24Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>WordCharacters</key>
