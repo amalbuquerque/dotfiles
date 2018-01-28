@@ -1,14 +1,27 @@
-# Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
+# Path to your oh-my-zsh installation.
+export ZSH=/home/andre/.oh-my-zsh
+
+# Set name of the theme to load. Optionally, if you set this to "random"
+# it'll load a random theme each time that oh-my-zsh is loaded.
+# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME="robbyrussell"
+
+# Set list of themes to load
+# Setting this variable when ZSH_THEME=random
+# cause zsh load theme from this variable instead of
+# looking in ~/.oh-my-zsh/themes/
+# An empty array have no effect
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
+
+# Uncomment the following line to use hyphen-insensitive completion. Case
+# sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
 
 # Uncomment the following line to disable bi-weekly auto-update checks.
 # DISABLE_AUTO_UPDATE="true"
@@ -45,31 +58,26 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(
+  git
+)
 
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-export PATH=$HOME/bin:/usr/local/bin:/usr/local/lib:$PATH
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
-export LANG=en_US.UTF-8
+# export LANG=en_US.UTF-8
 
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
 export EDITOR='vim'
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
 # ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
+# export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -79,67 +87,14 @@ export EDITOR='vim'
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-# alias galatest="git archive -o latest.zip HEAD $(git diff --name-only HEAD~1 HEAD)"
+alias ff="find . | fzf | xclip -selection clipboard"
 
-# Set generic HTTP proxy for applications which honor http_proxy
-# 2015/07/24 23:33:12, AA: PROXY_TO_USE set on .zshrc
-# http_proxy=http://127.0.0.1:55342/
-http_proxy=$PROXY_TO_USE
-https_proxy=$http_proxy
-ftp_proxy=$http_proxy
-HTTP_PROXY=$http_proxy
-HTTPS_PROXY=$http_proxy
-FTP_PROXY=$http_proxy
-export http_proxy HTTP_PROXY https_proxy HTTPS_PROXY ftp_proxy FTP_PROXY
+fpath=(~/.zsh/completion $fpath)
 
-# 2014-09-16, AA: para que consigamos utilizar o gvim
-export DISPLAY="localhost:0"
-# 2014-09-16, AA: para que apresente por defeito os caracteres UTF-8
-export LC_ALL=pt_PT.UTF-8
+autoload -Uz compinit && compinit -i
 
-# 2016-01-17, AA: To use the Tmux inside Vagrant (via SSH)
-if ! [ "$WILL_USE_VAGRANT" = "true" ]
-then
-    # 2015/07/24, AA: From http://unix.stackexchange.com/a/41282/68722
-    # $- -> current options set for the shell (from http://stackoverflow.com/a/5163260/687420)
-    # *i* -> regex searching for an 'i', indicating it's an interactive shell; only in this case, run tmux
-    case $- in *i*)
-      if [ -z "$TMUX" ]; then exec tmux; fi;;
-    esac
-fi
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# 2015/10/14 22:22:43, AA: From
-# https://www.reddit.com/r/vim/comments/3oowqn/stumbled_upon_a_nice_way_to_use_arrow_keys/
-# To use vim keybindings on zsh
-bindkey -v
+test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
 
-# 2016/03/18 09:32:58, AA: From
-# http://unix.stackexchange.com/a/30169/68722
-# To enable Ctrl+R to get reverse search history
-bindkey "^R" history-incremental-pattern-search-backward
-
-# 2015/10/30 23:20:51, AA: From 
-# http://stackoverflow.com/a/32398981/687420
-export VAGRANT_DETECTED_OS=cygwin
-
-# 2016/03/30 16:55:53, AA: From stackoverflow.com/questions/26435333/cygwin-tmux-on-windows-7-why-wont-tmux-use-the-current-path
-export CHERE_INVOKING=1
-
-# Set the key mapping style to 'emacs' or 'vi'.
-zstyle ':omz:module:editor' keymap 'vi'
-
-# Auto convert .... to ../..
-zstyle ':omz:module:editor' dot-expansion 'no'
-
-# Set the Oh My Zsh modules to load (browse modules).
-# The order matters.
-zstyle ':omz:load' omodule \
-  'environment' \
-  'terminal' \
-  'editor' \
-  'history' \
-  'directory' \
-  'spectrum' \
-  'utility' \
-  'completion' \
-  'prompt'
+. /usr/share/autojump/autojump.sh
