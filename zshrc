@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/home/andre/.oh-my-zsh
+export ZSH=$HOME/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -72,6 +72,13 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 export EDITOR='vim'
+bindkey -v
+
+# 2017/04/24 10:40:06, AA: https://dougblack.io/words/zsh-vi-mode.html
+bindkey '^P' up-history
+bindkey '^N' down-history
+bindkey '^w' backward-kill-word
+bindkey '^r' history-incremental-search-backward
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -87,6 +94,13 @@ export EDITOR='vim'
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+get_docker_names() {
+    docker ps | awk '{print $NF}' | grep -v "NAMES"
+}
+
+alias dps='get_docker_names | xargs docker stats'
+alias cleanup_docker_images='docker rm -v $(docker ps -a -q -f status=exited) && docker rmi $(docker images -q -f dangling=true)'
+alias g=git
 alias ff="find . | fzf | xclip -selection clipboard"
 
 fpath=(~/.zsh/completion $fpath)
@@ -97,4 +111,11 @@ autoload -Uz compinit && compinit -i
 
 test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
 
-. /usr/share/autojump/autojump.sh
+case `uname` in
+  Darwin)
+    [[ -s $(brew --prefix)/etc/profile.d/autojump.sh  ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
+  ;;
+  Linux)
+    . /usr/share/autojump/autojump.sh
+  ;;
+esac
