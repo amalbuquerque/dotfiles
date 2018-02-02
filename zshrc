@@ -77,6 +77,8 @@ bindkey '^P' up-history
 bindkey '^N' down-history
 bindkey '^w' backward-kill-word
 bindkey '^r' history-incremental-search-backward
+bindkey "^[b" backward-word
+bindkey "^[f" forward-word
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -98,8 +100,39 @@ get_docker_names() {
 
 alias dps='get_docker_names | xargs docker stats'
 alias cleanup_docker_images='docker rm -v $(docker ps -a -q -f status=exited) && docker rmi $(docker images -q -f dangling=true)'
-alias g=git
 alias ff="find . | fzf | xargs echo -n | xclip -selection clipboard"
+
+alias gl="git log -p"
+alias gd="git diff"
+
+alias gp="git pull origin $(current_branch)"
+alias gpu="git push origin $(current_branch)"
+alias gpuf="git push origin $(current_branch) --force-with-lease"
+
+alias gc="git commit -v"
+alias gca="git commit --amend"
+
+alias gs="git status"
+
+alias gch="git checkout -b hotfix/"
+alias gcf="git checkout -b feature/"
+alias gcb="git checkout -b"
+alias gco="git checkout"
+
+alias gri="git rebase -i HEAD~"
+
+alias gm="git merge --no-ff"
+
+alias ga="git add"
+alias gaa="git add -A"
+alias grh="git reset HEAD"
+alias grhh="git reset HEAD --hard"
+
+alias gst="git stash"
+alias gstp="git stash pop"
+alias gstl="git stash list"
+
+alias lu="~/dotfiles/open_urls.sh"
 
 fpath=(~/.zsh/completion $fpath)
 
