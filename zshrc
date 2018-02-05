@@ -65,6 +65,8 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+
+# Check https://github.com/mavam/dotfiles/commit/e05b3243b8ce136e790d014dd023c5b00cfba6c4
 plugins=(git docker docker-compose globalias)
 
 source $ZSH/oh-my-zsh.sh
@@ -107,14 +109,15 @@ get_docker_names() {
 
 alias dps='get_docker_names | xargs docker stats'
 alias cleanup_docker_images='docker rm -v $(docker ps -a -q -f status=exited) && docker rmi $(docker images -q -f dangling=true)'
+alias de='docker exec -i -t'
 alias ff="find . | fzf | xargs echo -n | xclip -selection clipboard"
 
 alias gl="git log -p"
 alias gd="git diff"
 
-alias gp="git pull origin $(current_branch)"
-alias gpu="git push origin $(current_branch)"
-alias gpuf="git push origin $(current_branch) --force-with-lease"
+alias gp="git pull origin \$(current_branch)"
+alias gpu="git push origin \$(current_branch)"
+alias gpuf="git push origin \$(current_branch) --force-with-lease"
 
 alias gc="git commit -v"
 alias gca="git commit --amend"
