@@ -162,3 +162,5 @@ case `uname` in
     . /usr/share/autojump/autojump.sh
   ;;
 esac
+
+export TERM=xterm-256color
