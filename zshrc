@@ -67,7 +67,7 @@ ZSH_THEME="robbyrussell"
 # Add wisely, as too many plugins slow down shell startup.
 
 # Check https://github.com/mavam/dotfiles/commit/e05b3243b8ce136e790d014dd023c5b00cfba6c4
-plugins=(git docker docker-compose globalias)
+plugins=(git docker docker-compose globalias zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
