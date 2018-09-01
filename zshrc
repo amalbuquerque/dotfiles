@@ -14,7 +14,8 @@ esac
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+# ZSH_THEME="robbyrussell"
+ZSH_THEME=""
 
 # Set list of themes to load
 # Setting this variable when ZSH_THEME=random
@@ -67,7 +68,7 @@ ZSH_THEME="robbyrussell"
 # Add wisely, as too many plugins slow down shell startup.
 
 # Check https://github.com/mavam/dotfiles/commit/e05b3243b8ce136e790d014dd023c5b00cfba6c4
-plugins=(git docker docker-compose globalias zsh-autosuggestions)
+plugins=(git docker docker-compose globalias zsh-autosuggestions kubectl)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -146,9 +147,19 @@ alias gconf="git config user.name \"andre.alb\"; git config user.email \"andre.a
 
 alias lu="~/dotfiles/open_urls.sh"
 
+alias k1='kubectl -n production'
+alias km='kubectl -n monitoring'
+alias k2='kubectl -n staging'
+alias k3='kubectl -n development'
+
 fpath=(~/.zsh/completion $fpath)
 
 autoload -Uz compinit && compinit -i
+
+# needs to be after source $ZSH/oh-my-zsh.sh
+# Check https://github.com/sindresorhus/pure
+autoload -U promptinit && promptinit
+prompt pure
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
