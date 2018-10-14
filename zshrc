@@ -111,6 +111,14 @@ get_docker_names() {
 alias dps='get_docker_names | xargs docker stats'
 alias cleanup_docker_images='docker rm -v $(docker ps -a -q -f status=exited) && docker rmi $(docker images -q -f dangling=true)'
 alias de='docker exec -i -t'
+
+alias dc='docker-compose'
+alias dcu='docker-compose up -d'
+alias dcd='docker-compose down'
+alias ddc='docker-compose -f docker-compose.dev.yml'
+alias ddcu='docker-compose -f docker-compose.dev.yml up -d'
+alias ddcd='docker-compose -f docker-compose.dev.yml down'
+
 alias ff="find . | fzf | xargs echo -n | xclip -selection clipboard"
 
 alias gl="git log -p"
@@ -181,3 +189,5 @@ if [ -f '/home/andre/google-cloud-sdk/path.zsh.inc' ]; then source '/home/andre/
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/home/andre/google-cloud-sdk/completion.zsh.inc' ]; then source '/home/andre/google-cloud-sdk/completion.zsh.inc'; fi
+
+if [ -f '/home/andre/dotfiles/secrets.zsh' ]; then source '/home/andre/dotfiles/secrets.zsh'; fi
