@@ -183,6 +183,10 @@ case `uname` in
 esac
 
 export TERM=xterm-256color
+# we need to export these, so we can access them
+# on child processes
+export UID
+export GID
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/home/andre/google-cloud-sdk/path.zsh.inc' ]; then source '/home/andre/google-cloud-sdk/path.zsh.inc'; fi
