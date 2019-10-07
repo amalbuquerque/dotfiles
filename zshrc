@@ -68,7 +68,7 @@ ZSH_THEME=""
 # Add wisely, as too many plugins slow down shell startup.
 
 # Check https://github.com/mavam/dotfiles/commit/e05b3243b8ce136e790d014dd023c5b00cfba6c4
-plugins=(git docker docker-compose globalias zsh-autosuggestions kubectl)
+plugins=(git docker docker-compose globalias kubectl zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -155,10 +155,15 @@ alias gconf="git config user.name \"andre.alb\"; git config user.email \"andre.a
 
 alias lu="~/dotfiles/open_urls.sh"
 
-alias k1='kubectl -n production'
-alias km='kubectl -n monitoring'
-alias k2='kubectl -n staging'
-alias k3='kubectl -n development'
+alias k13='kubectl_1_13'
+alias k7='kubectl_1_7'
+
+alias kp='kubectl get pods | grep'
+alias kd='kubectl describe'
+alias kl='kubectl logs -f'
+alias ke='kubectl exec -it bash'
+
+alias work='termdown 25m'
 
 fpath=(~/.zsh/completion $fpath)
 
@@ -195,3 +200,11 @@ if [ -f '/home/andre/google-cloud-sdk/path.zsh.inc' ]; then source '/home/andre/
 if [ -f '/home/andre/google-cloud-sdk/completion.zsh.inc' ]; then source '/home/andre/google-cloud-sdk/completion.zsh.inc'; fi
 
 if [ -f '/home/andre/dotfiles/secrets.zsh' ]; then source '/home/andre/dotfiles/secrets.zsh'; fi
+
+test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+test -d ~/.dotnet/tools && export PATH=~/.dotnet/tools:$PATH
+test -d ~/.gem/ruby/2.5.0/bin && export PATH=~/.gem/ruby/2.5.0/bin:$PATH
+
+test -e ~/.config/creds/nexus && source ~/.config/creds/nexus
+source <(kubectl_1_7_14 completion zsh | sed 's/kubectl/kubectl_1_7_14/g')
+source <(kubectl completion zsh)
