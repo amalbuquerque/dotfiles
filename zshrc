@@ -187,7 +187,6 @@ case `uname` in
   ;;
 esac
 
-export TERM=xterm-256color
 # we need to export these, so we can access them
 # on child processes
 export UID
@@ -208,3 +207,4 @@ test -d ~/.gem/ruby/2.5.0/bin && export PATH=~/.gem/ruby/2.5.0/bin:$PATH
 test -e ~/.config/creds/nexus && source ~/.config/creds/nexus
 source <(kubectl_1_7_14 completion zsh | sed 's/kubectl/kubectl_1_7_14/g')
 source <(kubectl completion zsh)
+alias nv='nvim'
