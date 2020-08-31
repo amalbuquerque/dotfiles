@@ -5,8 +5,31 @@ TODO: Missing the instructions on how to build and install the interception tool
 Installed:
 
 ```
-sudo apt-get install -y libyaml-cpp-dev libevdev libevdev-tools libevdev-dev libudev-dev
+sudo apt-get install -y libyaml-cpp-dev libevdev-tools libevdev-dev libudev-dev
 ```
+
+Then installed `interception_tools` and `space2meta`:
+
+```
+❯ git clone https://gitlab.com/interception/linux/tools.git interception_tools && cd interception_tools
+❯ mkdir build && cd ..
+❯ cmake ..
+❯ make
+❯ sudo make install
+```
+
+Now let's compile a custom `space2meta` Interception plugin, that instead of meta, sends the `RIGHTCTRL`, since we have the RIGHTCTRL activating a poor man's layer with XKB:
+
+```
+❯ git clone https://gitlab.com/interception/linux/plugins/space2meta.git interception_space2meta && cd interception_space2meta
+❯ sed -i 's/KEY_LEFTMETA/KEY_RIGHTCTRL/g' space2meta.c
+❯ mkdir build && cd ..
+❯ cmake ..
+❯ make
+❯ sudo make install
+```
+
+Now, let's configure the `udevmon` service. First, we need to know which keyboard.
 
 Look for the one that says "keyboard", in my case these are the following entries for my Dell XPS 13 PS/2 keyboard:
 
@@ -55,18 +78,6 @@ EVENTS:
   EV_REP:
     REP_DELAY: 250
     REP_PERIOD: 33
-```
-
-Now let's compile a custom `space2meta` Interception plugin, that instead of meta, sends the `RIGHTCTRL`, since we have the RIGHTCTRL activating a poor man's layer with XKB:
-
-```
-$ git clone https://gitlab.com/interception/linux/plugins/space2meta.git
-$ cd space2meta
-$ sed -i 's/KEY_LEFTMETA/KEY_RIGHTCTRL/g' space2meta.c
-$ mkdir build
-$ cd build && cmake ..
-$ make
-$ sudo make install
 ```
 
 Armed with the keyboard name and device path, let's create a `~/dotfiles/udev-interception/udevmon.yml` file that tells `udevmon` what to run:
