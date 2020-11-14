@@ -122,6 +122,7 @@ alias ddcd='docker-compose -f docker-compose.dev.yml down'
 alias ff="find . | fzf | xargs echo -n | xclip -selection clipboard"
 
 alias gl="git log -p"
+alias gls="git log --stat"
 alias gd="git diff"
 
 alias gp="git pull origin \$(current_branch)"
