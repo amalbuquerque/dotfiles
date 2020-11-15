@@ -14,7 +14,6 @@ esac
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-# ZSH_THEME="robbyrussell"
 ZSH_THEME=""
 
 # Set list of themes to load
@@ -68,7 +67,7 @@ ZSH_THEME=""
 # Add wisely, as too many plugins slow down shell startup.
 
 # Check https://github.com/mavam/dotfiles/commit/e05b3243b8ce136e790d014dd023c5b00cfba6c4
-plugins=(git docker docker-compose globalias kubectl zsh-autosuggestions)
+plugins=(git docker docker-compose globalias kubectl zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -79,7 +78,7 @@ source $ZSH/oh-my-zsh.sh
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
-export EDITOR='vim'
+export EDITOR='nvim'
 bindkey -v
 
 # 2017/04/24 10:40:06, AA: https://dougblack.io/words/zsh-vi-mode.html
@@ -166,12 +165,16 @@ alias ke='kubectl exec -it bash'
 
 alias work='termdown 25m'
 
+alias pbcopy="xclip -sel clip"
+
+
 fpath=(~/.zsh/completion $fpath)
 
 autoload -Uz compinit && compinit -i
 
 # needs to be after source $ZSH/oh-my-zsh.sh
 # Check https://github.com/sindresorhus/pure
+fpath+=$HOME/.zsh/pure
 autoload -U promptinit && promptinit
 prompt pure
 
@@ -207,6 +210,7 @@ test -d ~/.gem/ruby/2.5.0/bin && export PATH=~/.gem/ruby/2.5.0/bin:$PATH
 
 test -e ~/.config/creds/nexus && source ~/.config/creds/nexus
 alias nv='nvim'
+alias vim='nvim'
 
 . $HOME/.asdf/asdf.sh
 . $HOME/.asdf/completions/asdf.bash
