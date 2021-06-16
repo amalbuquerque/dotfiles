@@ -166,6 +166,7 @@ alias ke='kubectl exec -it bash'
 alias work='termdown 25m'
 
 alias pbcopy="xclip -sel clip"
+alias pbpaste='xclip -selection clipboard -o'
 
 
 fpath=(~/.zsh/completion $fpath)

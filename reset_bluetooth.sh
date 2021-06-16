@@ -1,0 +1,6 @@
+#!/bin/bash
+hciconfig hci0 down
+rmmod btusb
+modprobe btusb
+hciconfig hci0 up
+systemctl restart bluetooth
