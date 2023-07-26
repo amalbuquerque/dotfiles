@@ -18,8 +18,8 @@ window:
   # Specified in number of columns/lines, not pixels.
   # If both are `0`, this setting is ignored.
   dimensions:
-    columns: 0
-    lines: 0
+    columns: 140
+    lines: 40
     #
   # Allow terminal applications to change Alacritty's window title.
   dynamic_title: true
@@ -44,7 +44,7 @@ window:
   # Values for `decorations` (macOS only):
   #     - transparent: Title bar, transparent background and title bar buttons
   #     - buttonless: Title bar, transparent background, but no title bar buttons
-  decorations: none
+  decorations: full
 
   # When true, alacritty starts maximized.
   start_maximized: false
@@ -61,25 +61,25 @@ scrolling:
 font:
   # The normal (roman) font face to use.
   normal:
-    family: Source Code Pro # should be "Menlo" or something on macOS.
+    family: EnvyCodeS12 Nerd Font # should be "Menlo" or something on macOS.
     # Style can be specified to pick a specific face.
-    style: Regular:antialias=false
+    style: Book
 
   # The bold font face
   bold:
-    family: Source Code Pro # should be "Menlo" or something on macOS.
+    family: EnvyCodeS12 Nerd Font # should be "Menlo" or something on macOS.
     # Style can be specified to pick a specific face.
-    style: Bold
+    style: Italic
 
   # The italic font face
   italic:
-    family: Source Code Pro # should be "Menlo" or something on macOS.
+    family: EnvyCodeS12 Nerd Font # should be "Menlo" or something on macOS.
     # Style can be specified to pick a specific face.
     style: Italic
 
   # Point size of the font
   # nts
-  size: 12.0
+  size: 24.0
 
   # Offset is the extra space around each character. `offset.y` can be thought of
   # as modifying the line spacing, and `offset.x` as modifying the letter spacing.
@@ -250,7 +250,7 @@ mouse:
   # If this is `true`, the cursor is temporarily hidden when typing.
   hide_when_typing: true
 
-  url:
+  hints:
     # URL launcher
     #
     # This program is executed when clicking on a text which is recognized as a URL.
@@ -527,3 +527,11 @@ key_bindings:
   - { key: F11,      mods: Super,   chars: "\x1b[23;3~"                      }
   - { key: F12,      mods: Super,   chars: "\x1b[24;3~"                      }
   - { key: NumpadEnter,             chars: "\n"                              }
+  - { key: 36,      mods: Command,  action: ToggleFullscreen                 }
+  - { key: Grave,   mods: Alt,      chars: "`"                               }
+  - { key: E,       mods: Control,  chars: "\x1bOF"                          }
+  - { key: 36,      mods: Command,  action: ToggleFullscreen                 }
+  - { key: Equals,  mods: Command,  action: IncreaseFontSize                 }
+  - { key: Minus,   mods: Command,  action: DecreaseFontSize                 }
+  - { key: V,       mods: Control|Shift, action: Paste                       }
+  - { key: Q,       mods: Command,  action: Quit                             }

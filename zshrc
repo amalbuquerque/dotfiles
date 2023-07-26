@@ -1,10 +1,11 @@
 # If you come from bash you might have to change your $PATH.
+# export PATH="$(npm get prefix)/bin":~/.local/bin:$PATH
 export PATH=~/.local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 case `uname` in
   Darwin)
-    export ZSH=/Users/aalbuq/.oh-my-zsh
+    export ZSH=/Users/andre/.oh-my-zsh
   ;;
   Linux)
     export ZSH=/home/andre/.oh-my-zsh
@@ -120,6 +121,10 @@ alias ddcd='docker-compose -f docker-compose.dev.yml down'
 
 alias ff="find . | fzf | xargs echo -n | xclip -selection clipboard"
 
+export FZF_DEFAULT_COMMAND='fd --type file --follow --hidden --exclude .git --color=always'
+export FZF_DEFAULT_OPTS="--ansi"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
 alias gl="git log -p"
 alias gls="git log --stat"
 alias gd="git diff"
@@ -151,12 +156,7 @@ alias gst="git stash"
 alias gstp="git stash pop"
 alias gstl="git stash list"
 
-alias gconf="git config user.name \"andre.alb\"; git config user.email \"andre.albuquerque@onfido.com\""
-
-alias lu="~/dotfiles/open_urls.sh"
-
-alias k13='kubectl_1_13'
-alias k7='kubectl_1_7'
+alias gconf="git config user.name \"amalbuquerque\"; git config user.email \"andre.albuquerque@remote.com\""
 
 alias kp='kubectl get pods | grep'
 alias kd='kubectl describe'
@@ -167,6 +167,7 @@ alias work='termdown 25m'
 
 alias pbcopy="xclip -sel clip"
 
+alias cat='bat'
 
 fpath=(~/.zsh/completion $fpath)
 
@@ -179,8 +180,6 @@ autoload -U promptinit && promptinit
 prompt pure
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
 
 case `uname` in
   Darwin)
@@ -196,23 +195,49 @@ esac
 export UID
 export GID
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/andre/google-cloud-sdk/path.zsh.inc' ]; then source '/home/andre/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/andre/google-cloud-sdk/completion.zsh.inc' ]; then source '/home/andre/google-cloud-sdk/completion.zsh.inc'; fi
-
-if [ -f '/home/andre/dotfiles/secrets.zsh' ]; then source '/home/andre/dotfiles/secrets.zsh'; fi
-
-test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-test -d ~/.dotnet/tools && export PATH=~/.dotnet/tools:$PATH
-test -d ~/.gem/ruby/2.5.0/bin && export PATH=~/.gem/ruby/2.5.0/bin:$PATH
-
-test -e ~/.config/creds/nexus && source ~/.config/creds/nexus
 alias nv='nvim'
 alias vim='nvim'
+alias k9s='k9s -n default'
+alias weather="curl wttr.in/Corroios"
+alias v="fd --type f --hidden --exclude .git | fzf-tmux -p --reverse | xargs nvim"
+alias sit="idasen-controller --mac-address 60946793-CD62-1BB8-756B-A6AD31E2918D --move-to 695"
+alias stand="idasen-controller --mac-address 60946793-CD62-1BB8-756B-A6AD31E2918D --move-to 1146"
+# restart karabiner
+alias rk="sudo pkill Karabiner-DriverKit-VirtualHIDDeviceClient"
 
-. $HOME/.asdf/asdf.sh
-. $HOME/.asdf/completions/asdf.bash
+case `uname` in
+  Darwin)
+    # this export is a workaround, check https://github.com/asdf-vm/asdf/issues/1103
+    export ASDF_DIR=/Users/andre/.asdf
+    . /Users/andre/.asdf/asdf.sh
+    . /Users/andre/.asdf/completions/asdf.bash
+  ;;
+  Linux)
+    . $HOME/.asdf/asdf.sh
+    . $HOME/.asdf/completions/asdf.bash
+  ;;
+esac
 
 export ERL_AFLAGS="-kernel shell_history enabled"
+export AWS_PROFILE=sts
+
+# use it like this:
+# for file in $(\ls -G *.jpg); do image_resize_quality "$file" resized_pics; done
+image_resize_quality() {
+    convert $1 -resize 75%x75% -quality 75 $2/$1
+}
+
+# use it like this:
+# for file in $(\ls -G *.jpg); do convert_image_to_pdf "$file"; done
+convert_image_to_pdf() {
+    convert $1 -quality 100 $1.pdf
+}
+
+# for file in $(\ls -G *.jpg); do smarter_convert_image_to_pdf "$file"; done
+smarter_convert_image_to_pdf() {
+    convert $1 -quality 70 -density 72 -background white -page a4 $1.pdf
+}
+
+resize_pdf_to_a4() {
+    pdfjam --outfile $1.resized.pdf --paper a4paper $1
+}
