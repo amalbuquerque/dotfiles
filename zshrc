@@ -121,7 +121,7 @@ alias ddcd='docker-compose -f docker-compose.dev.yml down'
 
 alias ff="find . | fzf | xargs echo -n | xclip -selection clipboard"
 
-export FZF_DEFAULT_COMMAND='fd --type file --follow --hidden --exclude .git --color=always'
+export FZF_DEFAULT_COMMAND='fdfind --type file --follow --hidden --exclude .git --color=always'
 export FZF_DEFAULT_OPTS="--ansi"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
@@ -165,9 +165,10 @@ alias ke='kubectl exec -it bash'
 
 alias work='termdown 25m'
 
-alias pbcopy="xclip -sel clip"
+alias pbcopy="xclip -sel clip-board"
 
-alias cat='bat'
+alias cat='batcat'
+alias fd='fdfind'
 
 fpath=(~/.zsh/completion $fpath)
 
@@ -195,28 +196,33 @@ esac
 export UID
 export GID
 
-alias nv='nvim'
-alias vim='nvim'
-alias k9s='k9s -n default'
-alias weather="curl wttr.in/Corroios"
-alias v="fd --type f --hidden --exclude .git | fzf-tmux -p --reverse | xargs nvim"
-alias sit="idasen-controller --mac-address 60946793-CD62-1BB8-756B-A6AD31E2918D --move-to 695"
-alias stand="idasen-controller --mac-address 60946793-CD62-1BB8-756B-A6AD31E2918D --move-to 1146"
-# restart karabiner
-alias rk="sudo pkill Karabiner-DriverKit-VirtualHIDDeviceClient"
-
 case `uname` in
   Darwin)
     # this export is a workaround, check https://github.com/asdf-vm/asdf/issues/1103
     export ASDF_DIR=/Users/andre/.asdf
     . /Users/andre/.asdf/asdf.sh
     . /Users/andre/.asdf/completions/asdf.bash
+
+    export STANDING_DESK=60946793-CD62-1BB8-756B-A6AD31E2918D
   ;;
   Linux)
     . $HOME/.asdf/asdf.sh
     . $HOME/.asdf/completions/asdf.bash
+
+    export STANDING_DESK=D6:D8:6C:DE:9C:74
   ;;
 esac
+
+alias nv='nvim'
+alias vim='nvim'
+alias k9s='k9s -n default'
+alias weather="curl wttr.in/Corroios"
+alias v="fd --type f --hidden --exclude .git | fzf-tmux -p --reverse | xargs nvim"
+alias sit="idasen-controller --mac-address $STANDING_DESK --move-to 695"
+alias stand="idasen-controller --mac-address $STANDING_DESK --move-to 1146"
+alias stretch="idasen-controller --mac-address $STANDING_DESK --move-to 1229"
+# restart karabiner
+alias rk="sudo pkill Karabiner-DriverKit-VirtualHIDDeviceClient"
 
 export ERL_AFLAGS="-kernel shell_history enabled"
 export AWS_PROFILE=sts
@@ -241,3 +247,9 @@ smarter_convert_image_to_pdf() {
 resize_pdf_to_a4() {
     pdfjam --outfile $1.resized.pdf --paper a4paper $1
 }
+
+# remote stuff
+compdef remotectl
+compdef _remotectl remotectl
+source <(remotectl completion zsh)
+export AWS_PROFILE=sts
