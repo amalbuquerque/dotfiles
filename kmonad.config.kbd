@@ -1,0 +1,54 @@
+(defcfg
+  input  (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")
+  output (uinput-sink "KMonad kbd"))
+
+;; copied from https://github.com/kmonad/kmonad/blob/master/keymap/template/thinkpad_T430_iso.kbd
+;; seems to match Thinkpad X1 Carbon Gen 11 keyboard
+
+(defsrc
+       mute vold volu
+esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
+  grv  1    2    3    4    5    6    7    8    9    0    -     =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [     ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '          ret
+  lsft z    x    c    v    b    n    m    ,    .    /               rsft
+  wkup lctl lmet lalt           spc            ralt sys  rctl  pgdn up   pgup
+                                                               left down rght
+)
+
+;; TODO: try the different tap-hold, tap-hold-next, tap-next-release, tap-next-press, tap-hold-next-release
+;; https://github.com/kmonad/kmonad/blob/master/doc/quick-reference.md
+;; `tab` activates `spacefn` layer if held
+(defalias
+  ;; works for tab good enough
+  sptab (tap-next tab (layer-toggle spacefn))
+  ;; for spacefn we need tap-hold
+  spcfn (tap-hold 150 spc (layer-toggle spacefn)))
+
+
+;; first layer named `base`
+(deflayer base
+       mute vold volu
+esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
+  grv  1    2    3    4    5    6    7    8    9    0    -     =    bspc
+  @sptab q    w    e    r    t    y    u    i    o    p    [     ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '          ret
+  lsft z    x    c    v    b    n    m    ,    .    /               rsft
+  wkup lctl lmet lalt         @spcfn           ralt sys  rctl  pgdn up   pgup
+                                                               left down rght
+)
+
+;; dead tilde and circumflex
+(defalias tld (around lsft grv))
+(defalias cfl (around lsft 6))
+
+(deflayer spacefn
+       _    _    _
+_    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _     _
+  _    _    _    _    _   grv   _   home  _    _    _    _    _     _
+  _    _    _    _    _   @tld left down  up  rght bspc  _          _
+  _    _    _    _    _   @cfl end  del  ins  pgup pgdn             _
+  _    _    _    _              _              _    _    _     _    _    _
+                                                               _    _    _
+)

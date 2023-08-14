@@ -1,0 +1,40 @@
+# Setup 2023-08-01, Remote Thinkpad X1 Carbon
+
+TODO
+- Set RWin + ZXCVB as media keys with kmonad
+- Install CPU temp monitor: https://github.com/Veske/gnome-shell-extension-freon
+
+DONE
+- Install Chrome, Spotify, Slack
+- Install alacritty
+- Install 1password
+- Install git
+- Install Neovim
+- Install asdf
+- Install erlang, elixir
+- Install node
+- Install docker
+- Install flameshot
+- Install Ulauncher
+- Install Copyq
+- Install Loom DONE (Chrome only)
+- Install bat
+- Install jq
+- Install fzf
+- Install nnn
+- Install ripgrep
+- faster keyboard repeat rate
+- Alacritty should use zsh as the shell
+- Alacritty should use the Iosevka customized font I built
+- Hide Ubuntu left dock
+- Install elixir-ls
+- Copy projs/remote folder from Mac
+- Setup Tiger (secrets)
+- tweaks to the existing keyboard layout (AltGR + T|G|B, single/double quote should not be dead)
+- Install standing desk `stand|sit` scripts
+- Install PopOS shell (TWM for Gnome)
+- Install crowdstrike
+- Ulauncher shortcuts to select headphones/laptop speakers as PulseAudio sinks using pacmd
+- Left/right swipe inside browser goes back/forth
+  * working with 3-fingers using GNOME extension: https://github.com/harshadgavali/gnome-gesture-improvements
+- Set Space as SpaceFn with kmonad
