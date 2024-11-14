@@ -61,31 +61,37 @@ scrolling:
 font:
   # The normal (roman) font face to use.
   normal:
-    family: EnvyCodeS12 Nerd Font # should be "Menlo" or something on macOS.
+    family: EnvyCodeR Nerd Font
+    # family: CozetteHiDpi
+    # family: IosevkaTermSS10 Nerd Font # should be "Menlo" or something on macOS.
     # Style can be specified to pick a specific face.
-    style: Book
+    style: Medium
 
   # The bold font face
   bold:
-    family: EnvyCodeS12 Nerd Font # should be "Menlo" or something on macOS.
+    family: EnvyCodeR Nerd Font
+    # family: CozetteHiDpi
+    # family: IosevkaTermSS10 Nerd Font # should be "Menlo" or something on macOS.
     # Style can be specified to pick a specific face.
-    style: Italic
+    style: Medium Italic
 
   # The italic font face
   italic:
-    family: EnvyCodeS12 Nerd Font # should be "Menlo" or something on macOS.
+    family: EnvyCodeR Nerd Font
+    # family: CozetteHiDpi
+    # family: IosevkaTermSS10 Nerd Font # should be "Menlo" or something on macOS.
     # Style can be specified to pick a specific face.
-    style: Italic
+    style: Medium Italic
 
   # Point size of the font
   # nts
-  size: 24.0
+  size: 10
 
   # Offset is the extra space around each character. `offset.y` can be thought of
   # as modifying the line spacing, and `offset.x` as modifying the letter spacing.
   offset:
     x: 0
-    y: 0
+    y: -2
 
   # Glyph offset determines the locations of the glyphs within their cells with
   # the default being at the bottom. Increasing `x` moves the glyph to the right,
@@ -93,22 +99,6 @@ font:
   glyph_offset:
     x: 0
     y: 0
-
-  # Thin stroke font rendering (macOS only)
-  #
-  # Thin strokes are suitable for retina displays, but for non-retina screens
-  # it is recommended to set `use_thin_strokes` to `false`
-  #
-  # macOS >= 10.14.x:
-  #
-  # If the font quality on non-retina display looks bad then set
-  # `use_thin_strokes` to `true` and enable font smoothing by running the
-  # following command:
-  #   `defaults write -g CGFontRenderingFontSmoothingDisabled -bool NO`
-  #
-  # This is a global setting and will require a log out or restart to take
-  # effect.
-  use_thin_strokes: true
 
 # Display the time it takes to redraw each frame.
 render_timer: false
@@ -214,11 +204,8 @@ bell:
   duration: 0
   color: '0xffffff'
 
-# Background opacity
-#
-# Window opacity as a floating point number from `0.0` to `1.0`.
-# The value `0.0` is completely transparent and `1.0` is opaque.
-background_opacity: 1.0
+window:
+  opacity: 1.0
 
 # Mouse bindings
 #
@@ -315,9 +302,6 @@ live_config_reload: true
 # Alacritty will fall back to the WinPTY automatically if the ConPTY
 # backend cannot be initialized.
 enable_experimental_conpty_backend: false
-
-# Send ESC (\x1b) before characters when alt is pressed.
-alt_send_esc: true
 
 # Key bindings
 #
@@ -529,7 +513,7 @@ key_bindings:
   - { key: NumpadEnter,             chars: "\n"                              }
   - { key: 36,      mods: Command,  action: ToggleFullscreen                 }
   - { key: Grave,   mods: Alt,      chars: "`"                               }
-  - { key: E,       mods: Control,  chars: "\x1bOF"                          }
+# - { key: E,       mods: Control,  chars: "\x1bOF"                          }
   - { key: 36,      mods: Command,  action: ToggleFullscreen                 }
   - { key: Equals,  mods: Command,  action: IncreaseFontSize                 }
   - { key: Minus,   mods: Command,  action: DecreaseFontSize                 }

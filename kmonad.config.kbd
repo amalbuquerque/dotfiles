@@ -38,6 +38,9 @@ esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  
                                                                left down rght
 )
 
+;; TODO: See https://askubuntu.com/questions/1242402/map-media-keys-volume-up-down-to-custom-actions
+;; For multimedia keys
+
 ;; dead tilde and circumflex
 (defalias tld (around lsft grv))
 (defalias cfl (around lsft 6))

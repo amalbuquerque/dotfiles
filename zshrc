@@ -121,10 +121,6 @@ alias ddcd='docker-compose -f docker-compose.dev.yml down'
 
 alias ff="find . | fzf | xargs echo -n | xclip -selection clipboard"
 
-export FZF_DEFAULT_COMMAND='fdfind --type file --follow --hidden --exclude .git --color=always'
-export FZF_DEFAULT_OPTS="--ansi"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-
 alias gl="git log -p"
 alias gls="git log --stat"
 alias gd="git diff"
@@ -172,15 +168,23 @@ alias fd='fdfind'
 
 fpath=(~/.zsh/completion $fpath)
 
-autoload -Uz compinit && compinit -i
+# from https://news.ycombinator.com/item?id=40128826
+autoload -U compinit && compinit
+{
+  # Compile the completion dump to increase startup speed. Run in background.
+  zcompdump="${ZDOTDIR:-$HOME}/.zcompdump"
+  if [[ -s "$zcompdump" && (! -s "${zcompdump}.zwc" || "$zcompdump" -nt "${zcompdump}.zwc") ]]; then
+    # if zcompdump file exists, and we don't have a compiled version or the
+    # dump file is newer than the compiled file
+    zcompile "$zcompdump"
+  fi
+} &!
 
 # needs to be after source $ZSH/oh-my-zsh.sh
 # Check https://github.com/sindresorhus/pure
 fpath+=$HOME/.zsh/pure
 autoload -U promptinit && promptinit
 prompt pure
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 case `uname` in
   Darwin)
@@ -213,6 +217,7 @@ case `uname` in
   ;;
 esac
 
+alias ll='eza -lh'
 alias nv='nvim'
 alias vim='nvim'
 alias k9s='k9s -n default'
@@ -223,6 +228,14 @@ alias stand="idasen-controller --mac-address $STANDING_DESK --move-to 1146"
 alias stretch="idasen-controller --mac-address $STANDING_DESK --move-to 1229"
 # restart karabiner
 alias rk="sudo pkill Karabiner-DriverKit-VirtualHIDDeviceClient"
+alias mf="git ls-files --other --modified --exclude-standard | xargs mix format"
+alias ,tiex="MIX_ENV=test iex -S mix"
+alias ,iex="iex -S mix"
+
+
+alias ,pfeorapi="remotectl portforward eor-api -e production -l -c -r devops -p 5777 -g eu"
+alias ,pftiger="remotectl portforward tiger -lc -r devops -e production"
+alias ,pfoban="remotectl portforward tiger-oban -lc -r devops -e production -p 5333 -g eu"
 
 export ERL_AFLAGS="-kernel shell_history enabled"
 export AWS_PROFILE=sts
@@ -248,8 +261,14 @@ resize_pdf_to_a4() {
     pdfjam --outfile $1.resized.pdf --paper a4paper $1
 }
 
+# 2024-04-23 11:29, commented out below stuff to improve start times
 # remote stuff
-compdef remotectl
-compdef _remotectl remotectl
-source <(remotectl completion zsh)
+# compdef remotectl
+# compdef _remotectl remotectl
+# source <(remotectl completion zsh)
 export AWS_PROFILE=sts
+
+# source /usr/share/doc/fzf/examples/key-bindings.zsh
+# source /usr/share/doc/fzf/examples/completion.zsh
+
+eval "$(direnv hook zsh)"
