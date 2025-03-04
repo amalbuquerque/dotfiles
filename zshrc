@@ -217,6 +217,8 @@ case `uname` in
   ;;
 esac
 
+alias ,hvi='nvim --headless --listen 192.168.68.86:6666'
+alias ,cvi='neovide --server=andre-jupiter:6666'
 alias ll='eza -lh'
 alias nv='nvim'
 alias vim='nvim'
@@ -272,3 +274,6 @@ export AWS_PROFILE=sts
 # source /usr/share/doc/fzf/examples/completion.zsh
 
 eval "$(direnv hook zsh)"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
