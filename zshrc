@@ -277,3 +277,6 @@ eval "$(direnv hook zsh)"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# allow copy-paste over SSH to work
+xhost +si:localuser:andre &>/dev/null
