@@ -219,7 +219,7 @@ esac
 
 alias ,hvi='nvim --headless --listen 192.168.68.86:6666'
 alias ,cvi='neovide --server=andre-jupiter:6666'
-alias ll='eza -lh'
+alias ll='eza -lah --time-style=long-iso --sort=modified --reverse'
 alias nv='nvim'
 alias vim='nvim'
 alias k9s='k9s -n default'
@@ -277,6 +277,8 @@ eval "$(direnv hook zsh)"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+[ -f ~/.env.local ] && source ~/.env.local
 
 # allow copy-paste over SSH to work
 xhost +si:localuser:andre &>/dev/null
