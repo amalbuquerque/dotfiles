@@ -186,14 +186,7 @@ fpath+=$HOME/.zsh/pure
 autoload -U promptinit && promptinit
 prompt pure
 
-case `uname` in
-  Darwin)
-    [[ -s $(brew --prefix)/etc/profile.d/autojump.sh  ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
-  ;;
-  Linux)
-    . /usr/share/autojump/autojump.sh
-  ;;
-esac
+eval "$(zoxide init --cmd j zsh)"
 
 # we need to export these, so we can access them
 # on child processes
