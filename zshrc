@@ -235,6 +235,8 @@ alias ,pfoban="remotectl portforward tiger-oban -lc -r devops -e production -p 5
 export ERL_AFLAGS="-kernel shell_history enabled"
 export AWS_PROFILE=sts
 
+export LC_ALL="en_US.UTF-8"
+
 # use it like this:
 # for file in $(\ls -G *.jpg); do image_resize_quality "$file" resized_pics; done
 image_resize_quality() {
