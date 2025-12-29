@@ -125,9 +125,9 @@ alias gl="git log -p"
 alias gls="git log --stat"
 alias gd="git diff"
 
-alias gp="git pull origin \$(current_branch)"
-alias gpu="git push origin \$(current_branch)"
-alias gpuf="git push origin \$(current_branch) --force-with-lease"
+alias gp="git pull origin \$(git_current_branch)"
+alias gpu="git push origin \$(git_current_branch)"
+alias gpuf="git push origin \$(git_current_branch) --force-with-lease"
 
 alias gc="git commit -v"
 alias gca="git commit --amend"
@@ -221,9 +221,8 @@ alias v="fd --type f --hidden --exclude .git | fzf-tmux -p --reverse | xargs nvi
 alias sit="idasen-controller --mac-address $STANDING_DESK --move-to 695"
 alias stand="idasen-controller --mac-address $STANDING_DESK --move-to 1146"
 alias stretch="idasen-controller --mac-address $STANDING_DESK --move-to 1229"
-# restart karabiner
-alias rk="sudo pkill Karabiner-DriverKit-VirtualHIDDeviceClient"
-alias mf="git ls-files --other --modified --exclude-standard | xargs mix format"
+alias ,mf="git ls-files --other --modified --exclude-standard | grep '\.ex\(s\)\?$' | xargs mix format"
+alias ,mdem="mix deps.get && mix ecto.migrate && MIX_ENV=test mix ecto.migrate"
 alias ,tiex="MIX_ENV=test iex -S mix"
 alias ,iex="iex -S mix"
 
