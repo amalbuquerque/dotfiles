@@ -8,7 +8,8 @@ config = wezterm.config_builder()
 config.color_scheme = "Catppuccin Macchiato"
 
 config.font = wezterm.font_with_fallback({
-{ family = "EnvyCodeR Nerd Font", scale = 1.2 },
+-- { family = "EnvyCodeR Nerd Font", scale = 1.2 },
+{ family = "CommitMono-Andre", scale = 0.95 },
 
 { family = "IosevkaTermSS10 Nerd Font", scale = 1.2 },
 })
