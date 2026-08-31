@@ -119,6 +119,11 @@ alias ddc='docker-compose -f docker-compose.dev.yml'
 alias ddcu='docker-compose -f docker-compose.dev.yml up -d'
 alias ddcd='docker-compose -f docker-compose.dev.yml down'
 
+# Fast (unsafe: dev-only) but persistent Postgres for tiger. Data lives in the
+# named volume tiger_pgdata so it survives reboots/crashes; fsync et al are off
+# for speed. Never use these settings for data you can't afford to lose.
+alias ,tigerpg="docker rm -f tiger-pg 2>/dev/null; docker run -d --name tiger-pg -v tiger_pgdata:/var/lib/postgresql/data -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=tiger -p 5432:5432 postgres:17.5-alpine postgres -c max_connections=1500 -c fsync=off -c synchronous_commit=off -c full_page_writes=off"
+
 alias ff="find . | fzf | xargs echo -n | xclip -selection clipboard"
 
 alias gl="git log -p"
@@ -195,16 +200,10 @@ export GID
 
 case `uname` in
   Darwin)
-    # this export is a workaround, check https://github.com/asdf-vm/asdf/issues/1103
-    export ASDF_DIR=/Users/andre/.asdf
-    . /Users/andre/.asdf/asdf.sh
-    . /Users/andre/.asdf/completions/asdf.bash
 
     export STANDING_DESK=60946793-CD62-1BB8-756B-A6AD31E2918D
   ;;
   Linux)
-    . $HOME/.asdf/asdf.sh
-    . $HOME/.asdf/completions/asdf.bash
 
     export STANDING_DESK=D6:D8:6C:DE:9C:74
   ;;
@@ -224,7 +223,8 @@ alias brightness="adjust_brightness.sh"
 alias stretch="idasen-controller --mac-address $STANDING_DESK --move-to 1229"
 alias ,mf="git ls-files --other --modified --exclude-standard | grep '\.ex\(s\)\?$' | xargs mix format"
 alias ,mdem="mix deps.get && mix ecto.migrate && MIX_ENV=test mix ecto.migrate"
-alias ,tiex="MIX_ENV=test iex -S mix"
+alias ,imdes="mix deps.get && mix do ecto.create + ecto.setup && MIX_ENV=test mix do ecto.create + test.setup"
+alias ,tiex="MIX_ENV=test iex --sname test_server -S mix"
 alias ,iex="iex -S mix"
 
 
@@ -277,3 +277,14 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # allow copy-paste over SSH to work
 xhost +si:localuser:andre &>/dev/null
+eval "$(~/.local/bin/mise activate zsh)"
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+# pnpm
+export PNPM_HOME="/home/andre/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
