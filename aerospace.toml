@@ -1,0 +1,218 @@
+# AeroSpace — tiling window manager for macOS
+# https://nikitabobko.github.io/AeroSpace/guide
+#
+# Symlinked to ~/.config/aerospace/aerospace.toml
+# Bindings mirror i3.config where AeroSpace has an equivalent (see notes at the bottom).
+
+config-version = 2
+
+start-at-login = true
+
+# Set to true, then reload once manually to arm the auto-reloading
+auto-reload-config = true
+
+after-startup-command = []
+
+# Normalizations: keep the tree tidy automatically
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+default-root-container-layout = 'tiles'
+# 'auto': wide monitor -> horizontal, tall monitor -> vertical
+default-root-container-orientation = 'auto'
+
+accordion-padding = 30
+
+# Mouse jumps to the monitor that takes focus
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+
+focus-follows-mouse.enabled = false
+
+# Turns off macOS "Hide application" (cmd-h), which otherwise sends windows into limbo
+automatically-unhide-macos-hidden-apps = true
+
+key-mapping.preset = 'qwerty'
+
+# Workspaces 1-9 + 0 survive being empty, matching the fixed i3 workspace set
+persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+
+on-mode-changed = []
+
+gaps.inner.horizontal = 8
+gaps.inner.vertical   = 8
+gaps.outer.left       = 8
+gaps.outer.bottom     = 8
+gaps.outer.top        = 8
+gaps.outer.right      = 8
+
+[mode.main.binding]
+
+    # --- Launch / close -----------------------------------------------------
+    # alt-c, not i3's alt-enter: alt-enter opens service mode.
+    # AppleScript, not 'open -na': the -n flag spawns a whole second Ghostty
+    # process, which gets its own Dock icon. Ghostty's scripting dictionary has
+    # a real 'new window' command that reuses the running instance.
+    alt-c = '''exec-and-forget osascript -e 'tell application "Ghostty" to new window' '''
+    alt-shift-q = 'close'
+
+    # --- Focus (i3: $mod+hjkl) ---------------------------------------------
+    alt-h = 'focus left'
+    alt-j = 'focus down'
+    alt-k = 'focus up'
+    alt-l = 'focus right'
+
+    # --- Move window (i3: $mod+Shift+hjkl) ---------------------------------
+    alt-shift-h = 'move left'
+    alt-shift-j = 'move down'
+    alt-shift-k = 'move up'
+    alt-shift-l = 'move right'
+
+    # --- Monitors (i3: $mod+arrows = focus output) --------------------------
+    alt-left  = 'focus-monitor left'
+    alt-down  = 'focus-monitor down'
+    alt-up    = 'focus-monitor up'
+    alt-right = 'focus-monitor right'
+
+    alt-shift-left  = 'move-node-to-monitor --focus-follows-window left'
+    alt-shift-down  = 'move-node-to-monitor --focus-follows-window down'
+    alt-shift-up    = 'move-node-to-monitor --focus-follows-window up'
+    alt-shift-right = 'move-node-to-monitor --focus-follows-window right'
+
+    # --- Layout ------------------------------------------------------------
+    # AeroSpace has no split/parent concept: 'layout tiles horizontal vertical'
+    # flips the orientation of the current container instead (i3: $mod+slash).
+    # Lives on alt-v because alt-slash cycles workspaces and alt-t is reserved.
+    alt-v = 'layout tiles horizontal vertical'
+    # Accordion is the closest thing to i3's tabbed layout ($mod+w)
+    alt-w = 'layout accordion horizontal vertical'
+    alt-f = 'fullscreen'
+    alt-shift-space = 'layout floating tiling'
+
+    # --- Resize ------------------------------------------------------------
+    alt-minus = 'resize smart -50'
+    alt-equal = 'resize smart +50'
+    alt-r = 'mode resize'
+    alt-shift-r = 'balance-sizes'   # moved off alt-shift-b, reserved key
+
+    # --- Workspaces (i3: $mod+1..0) ----------------------------------------
+    alt-1 = 'workspace 1'
+    alt-2 = 'workspace 2'
+    alt-3 = 'workspace 3'
+    alt-4 = 'workspace 4'
+    alt-5 = 'workspace 5'
+    alt-6 = 'workspace 6'
+    alt-7 = 'workspace 7'
+    alt-8 = 'workspace 8'
+    alt-9 = 'workspace 9'
+    alt-0 = 'workspace 10'
+
+    alt-shift-1 = 'move-node-to-workspace 1'
+    alt-shift-2 = 'move-node-to-workspace 2'
+    alt-shift-3 = 'move-node-to-workspace 3'
+    alt-shift-4 = 'move-node-to-workspace 4'
+    alt-shift-5 = 'move-node-to-workspace 5'
+    alt-shift-6 = 'move-node-to-workspace 6'
+    alt-shift-7 = 'move-node-to-workspace 7'
+    alt-shift-8 = 'move-node-to-workspace 8'
+    alt-shift-9 = 'move-node-to-workspace 9'
+    alt-shift-0 = 'move-node-to-workspace 10'
+
+    # Cycle workspaces. Shifted one key right of i3's comma/period:
+    # alt-comma is reserved for typing ç
+    alt-period = 'workspace --wrap-around prev'
+    alt-slash  = 'workspace --wrap-around next'
+    alt-tab    = 'workspace-back-and-forth'
+
+    # Throw the whole workspace at another monitor
+    # (shifted for the same reason as above)
+    alt-shift-period = 'move-workspace-to-monitor --wrap-around prev'
+    alt-shift-slash  = 'move-workspace-to-monitor --wrap-around next'
+
+    # --- Meta --------------------------------------------------------------
+    alt-shift-c = 'reload-config'
+    alt-enter = 'mode service'
+
+# Resize mode (i3: $mod+r)
+[mode.resize.binding]
+    h = 'resize width -50'
+    j = 'resize height +50'
+    k = 'resize height -50'
+    l = 'resize width +50'
+
+    left  = 'resize width -50'
+    down  = 'resize height +50'
+    up    = 'resize height -50'
+    right = 'resize width +50'
+
+    minus = 'resize smart -50'
+    equal = 'resize smart +50'
+
+    b = ['balance-sizes', 'mode main']
+
+    enter = 'mode main'
+    esc   = 'mode main'
+
+# Service mode: rescue hatch for a mangled layout
+[mode.service.binding]
+    esc = ['reload-config', 'mode main']
+    r = ['flatten-workspace-tree', 'mode main']       # reset layout
+    f = ['layout floating tiling', 'mode main']
+    backspace = ['close-all-windows-but-current', 'mode main']
+
+    alt-shift-h = ['join-with left', 'mode main']
+    alt-shift-j = ['join-with down', 'mode main']
+    alt-shift-k = ['join-with up', 'mode main']
+    alt-shift-l = ['join-with right', 'mode main']
+
+# --- Windows that should never be tiled -----------------------------------
+# Find app-ids with: aerospace list-apps
+
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.ActivityMonitor'
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+if.window-title-regex-substring = 'Info'
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'org.pqrs.Karabiner-Elements.Settings'
+run = ['layout floating']
+
+# --- Pin workspaces to monitors -------------------------------------------
+# Without this, every workspace piles onto the main display and the other
+# monitors get auto-created workspaces that have no keybindings.
+# Monitor names come from: aerospace list-monitors
+# Patterns: 'main', 'secondary', 'built-in', or a case-insensitive regex
+# on the monitor name. Falls back to the focused monitor if nothing matches,
+# so laptop-only use still works.
+[workspace-to-monitor-force-assignment]
+1  = 'c34j79x'        # ultrawide - primary work
+2  = 'c34j79x'
+3  = 'c34j79x'
+4  = 'lg ultrafine'
+5  = 'lg ultrafine'
+6  = 'lg ultrafine'
+7  = 'built-in'
+8  = 'built-in'
+9  = 'built-in'
+10 = 'built-in'
+
+# --- Notes on i3 bindings with no AeroSpace equivalent --------------------
+# $mod+a       focus parent      -> no parent-focus concept; use service mode's join-with
+# $mod+s       stacking layout   -> only tiles/accordion/floating exist
+# $mod+minus   scratchpad        -> no scratchpad; park windows on workspace 10 instead
+# $mod+d       dmenu             -> use Raycast/Spotlight
+# $mod+space   focus mode_toggle -> alt-shift-space toggles floating/tiling instead
+# --- RESERVED: never bind these ------------------------------------------
+# Used by the Portuguese accent setup. Do not bind, with or without shift:
+#   alt-a  alt-e  alt-i  alt-o  alt-u
+#   alt-t  alt-g  alt-b
+#   alt-comma
+# alt-tab is fine (tab key, not the letter t).
+# Free letters left for future bindings: d m n p s x y z
