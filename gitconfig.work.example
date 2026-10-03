@@ -1,0 +1,5 @@
+# Copy to ~/.gitconfig.work and fill in the work address.
+# Kept out of the repo so it is not published with the dotfiles.
+[user]
+	name = André Albuquerque
+	email = you@company.example

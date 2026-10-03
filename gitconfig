@@ -1,0 +1,17 @@
+# Symlinked to ~/.gitconfig
+#
+# Deliberately no [user] section at this level: an identity is only ever
+# set by one of the includeIf blocks below. A repo outside those paths
+# fails with "Author identity unknown" rather than silently committing
+# under the wrong name.
+#
+# To fall back to the personal identity everywhere instead, move the
+# [user] block out of gitconfig.personal and into this file.
+
+[includeIf "gitdir:~/projs/personal/"]
+	path = ~/projs/personal/dotfiles/gitconfig.personal
+
+# Work identity lives outside the repo so the address stays off GitHub.
+# See gitconfig.work.example to recreate it on a new machine.
+[includeIf "gitdir:~/projs/remote/"]
+	path = ~/.gitconfig.work
