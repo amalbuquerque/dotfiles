@@ -5,7 +5,7 @@ export PATH=~/.local/bin:$PATH
 # Path to your oh-my-zsh installation.
 case `uname` in
   Darwin)
-    export ZSH=/Users/andre/.oh-my-zsh
+    export ZSH=/Users/andre.albuquerque/.oh-my-zsh
   ;;
   Linux)
     export ZSH=/home/andre/.oh-my-zsh
@@ -168,7 +168,7 @@ alias work='termdown 25m'
 
 alias pbcopy="xclip -sel clip-board"
 
-alias cat='batcat'
+alias cat='bat'
 alias fd='fdfind'
 
 fpath=(~/.zsh/completion $fpath)
@@ -185,9 +185,29 @@ autoload -U compinit && compinit
   fi
 } &!
 
-# needs to be after source $ZSH/oh-my-zsh.sh
-# Check https://github.com/sindresorhus/pure
-fpath+=$HOME/.zsh/pure
+case `uname` in
+  Darwin)
+    export STANDING_DESK=60946793-CD62-1BB8-756B-A6AD31E2918D
+    fpath+=("$(brew --prefix)/share/zsh/site-functions")
+  ;;
+  Linux)
+    # allow copy-paste over SSH to work
+    xhost +si:localuser:andre &>/dev/null
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    fpath+=$HOME/.zsh/pure
+
+    # pnpm (Linux paths)
+    export PNPM_HOME="$HOME/.local/share/pnpm"
+    case ":$PATH:" in
+      *":$PNPM_HOME/bin:"*) ;;
+      *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+    esac
+
+    export STANDING_DESK=D6:D8:6C:DE:9C:74
+  ;;
+esac
+
+# needs to be after source $ZSH/oh-my-zsh.sh Check https://github.com/sindresorhus/pure
 autoload -U promptinit && promptinit
 prompt pure
 
@@ -197,17 +217,6 @@ eval "$(zoxide init --cmd j zsh)"
 # on child processes
 export UID
 export GID
-
-case `uname` in
-  Darwin)
-
-    export STANDING_DESK=60946793-CD62-1BB8-756B-A6AD31E2918D
-  ;;
-  Linux)
-
-    export STANDING_DESK=D6:D8:6C:DE:9C:74
-  ;;
-esac
 
 alias ,hvi='nvim --headless --listen 192.168.68.86:6666'
 alias ,cvi='neovide --server=andre-jupiter:6666'
@@ -258,11 +267,6 @@ resize_pdf_to_a4() {
     pdfjam --outfile $1.resized.pdf --paper a4paper $1
 }
 
-# 2024-04-23 11:29, commented out below stuff to improve start times
-# remote stuff
-# compdef remotectl
-# compdef _remotectl remotectl
-# source <(remotectl completion zsh)
 export AWS_PROFILE=sts
 
 # source /usr/share/doc/fzf/examples/key-bindings.zsh
@@ -270,21 +274,10 @@ export AWS_PROFILE=sts
 
 eval "$(direnv hook zsh)"
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+source <(fzf --zsh)
 
 [ -f ~/.env.local ] && source ~/.env.local
 
-# allow copy-paste over SSH to work
-xhost +si:localuser:andre &>/dev/null
-eval "$(~/.local/bin/mise activate zsh)"
-
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
-# pnpm
-export PNPM_HOME="/home/andre/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME/bin:"*) ;;
-  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
-esac
-# pnpm end
+eval "$(~/.local/bin/mise activate zsh)"
