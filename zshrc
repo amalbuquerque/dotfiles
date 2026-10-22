@@ -124,7 +124,7 @@ alias ddcd='docker-compose -f docker-compose.dev.yml down'
 # for speed. Never use these settings for data you can't afford to lose.
 alias ,tigerpg="docker rm -f tiger-pg 2>/dev/null; docker run -d --name tiger-pg -v tiger_pgdata:/var/lib/postgresql/data -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=tiger -p 5432:5432 postgres:17.5-alpine postgres -c max_connections=1500 -c fsync=off -c synchronous_commit=off -c full_page_writes=off"
 
-alias ff="find . | fzf | xargs echo -n | xclip -selection clipboard"
+alias ff="find . | fzf | xargs echo -n | pbcopy"
 
 alias gl="git log -p"
 alias gls="git log --stat"
@@ -166,10 +166,7 @@ alias ke='kubectl exec -it bash'
 
 alias work='termdown 25m'
 
-alias pbcopy="xclip -sel clip-board"
-
 alias cat='bat'
-alias fd='fdfind'
 
 fpath=(~/.zsh/completion $fpath)
 
@@ -204,6 +201,10 @@ case `uname` in
     esac
 
     export STANDING_DESK=D6:D8:6C:DE:9C:74
+
+    alias pbcopy="xclip -sel clip-board"
+    alias fd='fdfind'
+    alias brightness="adjust_brightness.sh"
   ;;
 esac
 
@@ -228,7 +229,6 @@ alias weather="curl wttr.in/Corroios"
 alias v="fd --type f --hidden --exclude .git | fzf-tmux -p --reverse | xargs nvim"
 alias sit="idasen-controller --mac-address $STANDING_DESK --move-to 695"
 alias stand="idasen-controller --mac-address $STANDING_DESK --move-to 1146"
-alias brightness="adjust_brightness.sh"
 alias stretch="idasen-controller --mac-address $STANDING_DESK --move-to 1229"
 alias ,mf="git ls-files --other --modified --exclude-standard | grep '\.ex\(s\)\?$' | xargs mix format"
 alias ,mdem="mix deps.get && mix ecto.migrate && MIX_ENV=test mix ecto.migrate"
