@@ -226,7 +226,7 @@ alias nv='nvim'
 alias vim='nvim'
 alias k9s='k9s -n default'
 alias weather="curl wttr.in/Corroios"
-alias v="fd --type f --hidden --exclude .git | fzf-tmux -p --reverse | xargs nvim"
+alias v="fd --type f --hidden --exclude .git | fzf --tmux center --reverse | xargs nvim"
 alias sit="idasen-controller --mac-address $STANDING_DESK --move-to 695"
 alias stand="idasen-controller --mac-address $STANDING_DESK --move-to 1146"
 alias stretch="idasen-controller --mac-address $STANDING_DESK --move-to 1229"
@@ -274,10 +274,11 @@ export AWS_PROFILE=sts
 
 eval "$(direnv hook zsh)"
 
-source <(fzf --zsh)
-
 [ -f ~/.env.local ] && source ~/.env.local
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 eval "$(~/.local/bin/mise activate zsh)"
+
+# after mise activate, since fzf is installed with mise
+source <(fzf --zsh)
