@@ -1,0 +1,273 @@
+#!/usr/bin/env bash
+# claude-sessions - fzf picker over Claude Code sessions, most recent first.
+# Enter resumes the picked session in the directory it was started in.
+
+set -uo pipefail
+
+CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+PROJECTS_DIR="$CLAUDE_DIR/projects"
+CLAUDE_BIN="${CLAUDE_BIN:-claude}"
+PREVIEW_PCT="${CLAUDE_SESSIONS_PREVIEW_PCT:-46}"
+SELF=$(readlink -f -- "$0")
+TAB=$'\t'
+
+if [[ -t 1 || -n ${FORCE_COLOR:-} ]]; then
+  DIM=$'\e[38;5;244m'; CYAN=$'\e[36m'; YEL=$'\e[33m'; BOLD=$'\e[1m'; RST=$'\e[0m'
+else
+  DIM=; CYAN=; YEL=; BOLD=; RST=
+fi
+
+die() { printf '%s: %s\n' "${0##*/}" "$*" >&2; exit 1; }
+
+usage() {
+  cat <<'USAGE'
+Usage: claude-sessions [options] [query] [-- extra claude args]
+
+Lists every Claude Code session, most recently used first, and resumes the pick.
+
+Options:
+  -H, --here        only sessions started in the current directory
+  -U, --under       only sessions started in or below the current directory
+  -n, --limit N     show at most N sessions
+  -p, --print       print the picked session id and transcript path, don't resume
+  -f, --fork        resume under a new session id (claude --fork-session)
+  -h, --help        show this help
+
+Keys in the picker:
+  enter   resume              ctrl-f  resume as a fork
+  ctrl-o  print id and path   ctrl-/  toggle the preview pane
+
+Environment:
+  CLAUDE_CONFIG_DIR             where sessions live (default ~/.claude)
+  CLAUDE_BIN                    claude executable (default: claude)
+  CLAUDE_SESSIONS_PREVIEW_PCT   preview pane width, in percent (default 46)
+USAGE
+}
+
+# --- preview pane (re-entrant: fzf calls us back with --preview) --------------
+
+preview() {
+  local f=$1 id title cwd br ver started cost msgs when line
+  [[ -f $f ]] || { echo "no transcript at $f"; return 0; }
+  id=${f##*/}; id=${id%.jsonl}
+
+  title=$(grep -e '"type":"ai-title"' -- "$f" 2>/dev/null | tail -n 1 |
+          jq -r '.aiTitle // empty' 2>/dev/null)
+  line=$(grep -m 1 -e '"cwd":"' -- "$f" 2>/dev/null)
+  cwd=$(jq     -r '.cwd // ""'       <<<"$line" 2>/dev/null)
+  br=$(jq      -r '.gitBranch // ""' <<<"$line" 2>/dev/null)
+  ver=$(jq     -r '.version // ""'   <<<"$line" 2>/dev/null)
+  started=$(jq -r '.timestamp // ""' <<<"$line" 2>/dev/null)
+  cost=$(grep -e '"type":"cost-state"' -- "$f" 2>/dev/null | tail -n 1 |
+         jq -r 'if .totalCostUSD then "$" + (.totalCostUSD * 100 | round / 100 | tostring) else empty end' 2>/dev/null)
+  msgs=$(grep -c -e '"type":"assistant"' -- "$f" 2>/dev/null)
+  when=$(date -d "@$(stat -c %Y -- "$f")" '+%Y-%m-%d %H:%M')
+
+  printf '%s%s%s\n%s%s%s\n\n' "$BOLD" "${title:-(untitled session)}" "$RST" "$DIM" "$id" "$RST"
+  printf '%sdir     %s%s\n' "$DIM" "$RST" "${cwd/#$HOME/\~}"
+  [[ -n $br ]] && printf '%sbranch  %s%s%s%s\n' "$DIM" "$RST" "$YEL" "$br" "$RST"
+  printf '%sused    %s%s\n' "$DIM" "$RST" "$when"
+  [[ -n $started ]] && printf '%sstarted %s%s %s\n' "$DIM" "$RST" "${started:0:10}" "${started:11:5}"
+  printf '%ssize    %s%s replies%s%s\n\n' "$DIM" "$RST" "$msgs" "${cost:+ · $cost}" "${ver:+ · v$ver}"
+  printf '%s──── recent ────%s\n' "$DIM" "$RST"
+
+  tail -n 600 -- "$f" | jq -Rr --arg dim "$DIM" --arg cyan "$CYAN" --arg rst "$RST" '
+    (fromjson? // empty)
+    | select(.isSidechain != true and .isMeta != true)
+    | select(.type == "user" or .type == "assistant")
+    | ((.message.content // "")
+       | if type == "string" then .
+         else (map(select(.type? == "text") | .text) | join(" "))
+         end) as $t
+    | select(($t | type) == "string" and ($t | length) > 0)
+    | select($t | test("^\\s*<") | not)
+    | (if .type == "user" then $cyan + "you" + $rst else $dim + "claude" + $rst end) as $who
+    | $who + "  " + ($t | gsub("\\s+"; " ") | .[0:280])
+  ' 2>/dev/null | tail -n 24
+}
+
+if [[ ${1-} == --preview ]]; then
+  preview "${2-}"
+  exit 0
+fi
+
+# --- options ------------------------------------------------------------------
+
+filter=all; limit=0; query=; print_only=0; fork=0; extra=()
+while (($#)); do
+  case $1 in
+    -H|--here)  filter=here ;;
+    -U|--under) filter=under ;;
+    -n|--limit) limit=${2:?--limit needs a number}; shift ;;
+    -p|--print) print_only=1 ;;
+    -f|--fork)  fork=1 ;;
+    -h|--help)  usage; exit 0 ;;
+    --) shift; extra=("$@"); break ;;
+    -*) die "unknown option: $1 (try --help)" ;;
+    *)  query=$1 ;;
+  esac
+  shift
+done
+
+command -v fzf >/dev/null || die "fzf is not installed"
+command -v jq  >/dev/null || die "jq is not installed"
+[[ -d $PROJECTS_DIR ]] || die "no sessions directory at $PROJECTS_DIR"
+
+# --- gather -------------------------------------------------------------------
+# One grep pass per fact, not one per file: the ai-title lines carry the title,
+# and the first line bearing a cwd is the opening user turn, which also carries
+# the git branch and the prompt we fall back to when a session has no title.
+
+files=()
+while IFS= read -r -d '' p; do files+=("$p"); done < <(
+  find "$PROJECTS_DIR" -mindepth 2 -maxdepth 2 -type f -name '*.jsonl' -print0 2>/dev/null
+)
+((${#files[@]})) || die "no sessions found under $PROJECTS_DIR"
+
+declare -A TITLE=() CWD=() BRANCH=() PROMPT=() FIRSTP=() MTIME=()
+
+while IFS=$TAB read -r p t; do TITLE[$p]=$t; done < <(
+  printf '%s\0' "${files[@]}" | xargs -0 grep -H -e '"type":"ai-title"' -- 2>/dev/null |
+  jq -Rr '
+    (index(":{")) as $i | select($i != null)
+    | [ .[:$i],
+        ((.[$i+1:] | fromjson? // {}) | .aiTitle // "" | gsub("\\s+"; " "))
+      ] | @tsv'
+)
+
+while IFS=$TAB read -r p c b q; do CWD[$p]=$c; BRANCH[$p]=$b; PROMPT[$p]=$q; done < <(
+  printf '%s\0' "${files[@]}" | xargs -0 grep -m 1 -H -e '"cwd":"' -- 2>/dev/null |
+  jq -Rr '
+    (index(":{")) as $i | select($i != null)
+    | (.[$i+1:] | fromjson? // {}) as $j
+    | [ .[:$i],
+        ($j.cwd // ""),
+        ($j.gitBranch // ""),
+        ((($j.message.content // "") | if type == "string" then . else "" end) as $c
+         | if ($c | test("<command-name>"))
+           then ($c | capture("<command-name>(?<n>[^<]*)") | .n)
+                + (if ($c | test("<command-args>[^<]"))
+                   then " " + ($c | capture("<command-args>(?<a>[^<]*)") | .a) else "" end)
+           else ($c | gsub("<[^>]*>[^<]*</[^>]*>"; " ") | gsub("<[^>]*>"; " "))
+           end
+         | gsub("\\s+"; " ") | ltrimstr(" ") | rtrimstr(" ") | .[0:160])
+      ] | @tsv'
+)
+
+while IFS=$TAB read -r p q; do FIRSTP[$p]=$q; done < <(
+  printf '%s\0' "${files[@]}" | xargs -0 grep -m 1 -H -e '"type":"last-prompt"' -- 2>/dev/null |
+  jq -Rr '
+    (index(":{")) as $i | select($i != null)
+    | [ .[:$i],
+        ((.[$i+1:] | fromjson? // {}) | .lastPrompt // "" | gsub("\\s+"; " ") | .[0:160])
+      ] | @tsv'
+)
+
+while read -r ep p; do MTIME[$p]=$ep; done < <(
+  printf '%s\0' "${files[@]}" | xargs -0 stat -c '%Y %n' --
+)
+
+# --- column widths, sized to whatever is left beside the preview --------------
+
+cols=$(tput cols 2>/dev/null) || cols=120
+((cols > 20)) || cols=120
+avail=$(( cols * (100 - PREVIEW_PCT) / 100 - 8 ))
+((avail < 40)) && avail=40
+
+rest=$(( avail - 23 ))                      # date, age and the gaps between columns
+title_w=$(( rest * 45 / 100 ))
+dir_w=$((   rest * 31 / 100 ))
+branch_w=$(( rest * 24 / 100 ))
+((title_w  < 18)) && title_w=18
+((dir_w    > 38)) && dir_w=38
+((branch_w > 30)) && branch_w=30
+show_dir=1;    ((dir_w    < 10)) && { show_dir=0;    dir_w=0; }
+show_branch=1; ((branch_w < 10)) && { show_branch=0; branch_w=0; }
+
+now=$(date +%s)
+here=$PWD
+
+age() {
+  local d=$(( now - $1 ))
+  if   ((d < 3600));     then printf '%dm'  $(( d / 60 ))
+  elif ((d < 86400));    then printf '%dh'  $(( d / 3600 ))
+  elif ((d < 86400*60)); then printf '%dd'  $(( d / 86400 ))
+  else                        printf '%dmo' $(( d / 2592000 ))
+  fi
+}
+
+fit_tail() {  # paths: the tail is the part that identifies them
+  local w=$1 s=$2
+  ((${#s} > w)) && s="..${s: -$((w - 2))}"
+  printf '%-*s' "$w" "$s"
+}
+
+fit_head() {  # titles and branches: the head is
+  local w=$1 s=$2
+  ((${#s} > w)) && s="${s:0:$((w - 2))}.."
+  printf '%-*s' "$w" "$s"
+}
+
+# --- rows ---------------------------------------------------------------------
+
+rows=()
+for p in "${files[@]}"; do
+  cwd=${CWD[$p]-}; [[ -n $cwd ]] || continue
+  case $filter in
+    here)  [[ $cwd == "$here" ]] || continue ;;
+    under) [[ $cwd == "$here" || $cwd == "$here"/* ]] || continue ;;
+  esac
+
+  id=${p##*/}; id=${id%.jsonl}
+  ep=${MTIME[$p]:-0}
+  title=${TITLE[$p]-}
+  [[ -n $title ]] || title=${PROMPT[$p]-}
+  [[ -n $title ]] || title=${FIRSTP[$p]-}
+  [[ -n $title ]] || title='(no title)'
+
+  disp=$(printf '%s%s %4s%s  %s' \
+    "$DIM" "$(date -d "@$ep" '+%m-%d %H:%M')" "$(age "$ep")" "$RST" \
+    "$(fit_head "$title_w" "$title")")
+  ((show_dir))    && disp+=$(printf '  %s%s%s' "$CYAN" "$(fit_tail "$dir_w" "${cwd/#$HOME/\~}")" "$RST")
+  ((show_branch)) && disp+=$(printf '  %s%s%s' "$YEL"  "$(fit_head "$branch_w" "${BRANCH[$p]-}")" "$RST")
+  disp+=$(printf '  %s%s%s' "$DIM" "${id:0:8}" "$RST")   # searchable, clipped last
+
+  rows+=( "$ep$TAB$disp$TAB$id$TAB$cwd$TAB$p" )
+done
+((${#rows[@]})) || die "no sessions matched"
+
+sorted=$(printf '%s\n' "${rows[@]}" | sort -t"$TAB" -k1,1nr | cut -d"$TAB" -f2-)
+((limit > 0)) && sorted=$(head -n "$limit" <<<"$sorted")
+
+# --- pick ---------------------------------------------------------------------
+
+out=$(fzf --ansi --delimiter="$TAB" --with-nth=1 \
+          --height='100%' --layout=reverse --info=inline --border=none \
+          --prompt='resume > ' \
+          --header='enter resume · ctrl-f fork · ctrl-o print · ctrl-/ preview' \
+          --preview="'$SELF' --preview {4}" \
+          --preview-window="right,${PREVIEW_PCT}%,wrap,border-left" \
+          --bind='ctrl-/:toggle-preview' \
+          --expect=ctrl-f,ctrl-o \
+          --query="$query" <<<"$sorted") || exit $?
+
+key=$(sed -n 1p <<<"$out")
+IFS=$TAB read -r _ id cwd file < <(sed -n 2p <<<"$out")
+[[ -n ${id-} ]] || exit 130
+
+case $key in
+  ctrl-o) print_only=1 ;;
+  ctrl-f) fork=1 ;;
+esac
+
+if ((print_only)); then
+  printf '%s\n%s\n' "$id" "$file"
+  exit 0
+fi
+
+[[ -d $cwd ]] || die "the session's directory is gone: $cwd"
+cd "$cwd" || die "cannot cd to $cwd"
+
+args=(--resume "$id")
+((fork)) && args+=(--fork-session)
+exec "$CLAUDE_BIN" "${args[@]}" "${extra[@]}"
